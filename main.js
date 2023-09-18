@@ -28,8 +28,6 @@ function sleep(duration) {
 
   await page.waitForNetworkIdle();
 
-  console.log(page.url());
-
   const courseLinkPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
   const courseLinkList = (
     await page.$$eval("a.list-group-item.list-group-item-action", (elList) =>
