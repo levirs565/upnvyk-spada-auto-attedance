@@ -34,6 +34,7 @@ function sleep(duration) {
       process.env.SPADA_PASSWORD.length / 2
     )
   );
+  console.log(process.env.SPADA_USERNAME);
   console.log(page.url());
 
   const courseLinkPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
