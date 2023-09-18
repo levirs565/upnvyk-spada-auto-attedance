@@ -12,7 +12,8 @@ function sleep(duration) {
   });
   const page = await browser.newPage();
 
-  await page.goto("https://spada.upnyk.ac.id/login/index.php");
+  const loginUrl = "https://spada.upnyk.ac.id/login/index.php";
+  await page.goto(loginUrl);
   await page.waitForNetworkIdle();
 
   if (process.env.SPADA_PASSWORD.length == 0) {
@@ -28,13 +29,6 @@ function sleep(duration) {
 
   await page.waitForNetworkIdle();
 
-  console.log(
-    process.env.SPADA_PASSWORD.substring(
-      0,
-      process.env.SPADA_PASSWORD.length / 2
-    )
-  );
-  console.log(process.env.SPADA_USERNAME);
   console.log(page.url());
 
   const courseLinkPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
