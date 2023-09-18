@@ -15,6 +15,10 @@ function sleep(duration) {
   await page.goto("https://spada.upnyk.ac.id/login/index.php");
   await page.waitForNetworkIdle();
 
+  if (process.env.SPADA_PASSWORD.length == 0) {
+    console.log("Password belum di set");
+  }
+
   await page.type("#username", process.env.SPADA_USERNAME);
   await page.type("#password", process.env.SPADA_PASSWORD);
 
