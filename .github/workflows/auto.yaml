@@ -18,3 +18,6 @@ jobs:
           node main.js
         env:
           CI: true
+          SPADA_USERNAME: ${{ secrets.SpadaUsername }}
+          SPADA_PASSWORD: ${{ secrets.SpadaPassword }}
+
