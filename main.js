@@ -1,6 +1,11 @@
 import puppeteer from "puppeteer";
+import fs from "fs-extra";
+import path from "path";
+import url from "url";
+import "dotenv/config";
 
-function sleep(duration) {
+function testSleep(duration) {
+  if (process.env.CI === "true") return Promise.resolve();
   return new Promise((resolve) => {
     setTimeout(resolve, duration);
   });
@@ -59,11 +64,31 @@ function sleep(duration) {
   const attendanceLinkSelector =
     "a[href^='https://spada.upnyk.ac.id/mod/attendance/view.php?id=']";
 
-  for await (const courseLink of courseLinkList) {
+  const snapshotDir = path.join(
+    url.fileURLToPath(new URL(".", import.meta.url)),
+    "snapshot"
+  );
+  const courseCsvFile = path.join(snapshotDir, "course-list.csv");
+  const snapshotCsvFile = path.join(snapshotDir, "index.csv");
+
+  if (await fs.pathExists(snapshotDir)) await fs.remove(snapshotDir);
+  await fs.mkdir(snapshotDir);
+  await fs.appendFile(courseCsvFile, "Index,Nama\n");
+  await fs.appendFile(snapshotCsvFile, "Nama,Url\n");
+
+  async function addSnapshot(name) {
+    await fs.appendFile(snapshotCsvFile, `${name},${page.url()}\n`);
+    await fs.writeFile(path.join(snapshotDir, name), await page.content());
+  }
+
+  for await (const [courseIndex, courseLink] of courseLinkList.entries()) {
     await page.goto(courseLink);
     await page.waitForNetworkIdle();
     const courseName = await page.$eval("h1", (el) => el.innerText);
     console.log(`Mencoba presensi ${courseName}`);
+
+    await fs.appendFile(courseCsvFile, `${courseIndex},${courseName}\n`);
+    addSnapshot(`${courseIndex}-presensi.html`);
 
     if (!(await page.$(attendanceLinkSelector))) {
       console.log("Tidak ada link presensi");
@@ -89,10 +114,12 @@ function sleep(duration) {
         .map((el) => el.href)
     );
     if (submitLinkList.length == 0) console.log("Tidak ada link submit");
-    for await (const submitLink of submitLinkList) {
+    for await (const [submitIndex, submitLink] of submitLinkList.entries()) {
       console.log(`Mencoba ${submitLink}`);
       await page.goto(submitLink);
       await page.waitForNetworkIdle();
+
+      addSnapshot(`${courseIndex}-submit-${submitIndex}.html`);
 
       console.log(
         await page.$$eval("input", (elList) =>
@@ -112,8 +139,8 @@ function sleep(duration) {
         )
       );
     }
-    await sleep(2000);
+    await testSleep(2000);
   }
-  await sleep(5000);
+  await testSleep(5000);
   await browser.close();
 })();
