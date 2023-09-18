@@ -20,16 +20,34 @@ function sleep(duration) {
     console.log("Password belum di set");
   }
 
-  await page.type("#username", process.env.SPADA_USERNAME);
-  await page.type("#password", process.env.SPADA_PASSWORD);
+  let repeatLoginCount = 0;
+  while (true) {
+    console.log("Mencoba login");
+    await page.type("#username", process.env.SPADA_USERNAME);
+    await page.type("#password", process.env.SPADA_PASSWORD);
 
-  const loginSelector = "#loginbtn";
-  await page.waitForSelector(loginSelector);
-  await page.click(loginSelector);
+    const loginSelector = "#loginbtn";
+    await page.waitForSelector(loginSelector);
 
-  await page.waitForNetworkIdle();
+    await Promise.all([
+      page.waitForNavigation(),
+      await page.click(loginSelector),
+    ]);
 
-  console.log(page.url());
+    await page.waitForNetworkIdle();
+
+    if (page.url() === loginUrl) {
+      console.log("Login gagal.");
+      repeatLoginCount++;
+      if (repeatLoginCount === 10) {
+        process.exit();
+      } else {
+        continue;
+      }
+    }
+
+    break;
+  }
 
   const courseLinkPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
   const courseLinkList = (
