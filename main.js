@@ -88,7 +88,6 @@ function testSleep(duration) {
     console.log(`Mencoba presensi ${courseName}`);
 
     await fs.appendFile(courseCsvFile, `${courseIndex},${courseName}\n`);
-    addSnapshot(`${courseIndex}-presensi.html`);
 
     if (!(await page.$(attendanceLinkSelector))) {
       console.log("Tidak ada link presensi");
@@ -100,6 +99,9 @@ function testSleep(duration) {
       page.click(attendanceLinkSelector),
     ]);
     await page.waitForNetworkIdle();
+
+    await addSnapshot(`${courseIndex}-presensi.html`);
+
     console.log(
       await page.$$eval("a", (elList) =>
         elList
@@ -119,7 +121,7 @@ function testSleep(duration) {
       await page.goto(submitLink);
       await page.waitForNetworkIdle();
 
-      addSnapshot(`${courseIndex}-submit-${submitIndex}.html`);
+      await addSnapshot(`${courseIndex}-submit-${submitIndex}.html`);
 
       console.log(
         await page.$$eval("input", (elList) =>
