@@ -11,6 +11,15 @@ function testSleep(duration) {
   });
 }
 
+function fixTime(time) {
+  const splitIndex = time.length - 2;
+  return (
+    time.substring(0, splitIndex) +
+    (time.includes(":") ? " " : ":00 ") +
+    time.substring(splitIndex)
+  );
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     headless: process.env.CI === "true",
@@ -62,18 +71,20 @@ function testSleep(duration) {
   ).filter((link) => link.startsWith(courseLinkPrefix));
 
   const attendanceLinkSelector =
-    "a[href^='https://spada.upnyk.ac.id/mod/attendance/view.php?id=']";
+    ".activityinstance > a[href^='https://spada.upnyk.ac.id/mod/attendance/view.php?id=']";
 
   const snapshotDir = path.join(
     url.fileURLToPath(new URL(".", import.meta.url)),
     "snapshot"
   );
   const courseCsvFile = path.join(snapshotDir, "course-list.csv");
+  const courseTimeCsvFile = path.join(snapshotDir, "course-times.csv");
   const snapshotCsvFile = path.join(snapshotDir, "index.csv");
 
   if (await fs.pathExists(snapshotDir)) await fs.remove(snapshotDir);
   await fs.mkdir(snapshotDir);
   await fs.appendFile(courseCsvFile, "Index,Nama\n");
+  await fs.appendFile(courseTimeCsvFile, "Index,Date,StartTime,EndTime,Cron\n");
   await fs.appendFile(snapshotCsvFile, "Nama,Url\n");
 
   async function addSnapshot(name) {
@@ -101,6 +112,22 @@ function testSleep(duration) {
     await page.waitForNetworkIdle();
 
     await addSnapshot(`${courseIndex}-presensi.html`);
+
+    const [date, timeRange] = await page.$eval(".datecol.cell.c0", (el) => [
+      el.children[0].textContent,
+      el.children[1].textContent,
+    ]);
+    let [startTime, endTime] = timeRange
+      .split("-")
+      .map((text) => fixTime(text.trim()));
+    const startDate = new Date(`${date} ${startTime} GMT+7`);
+    const startCron = `${startDate.getUTCMinutes()} ${startDate.getUTCHours()} * * ${startDate.getUTCDay()}`;
+    await fs.appendFile(
+      courseTimeCsvFile,
+      `${courseIndex},${date},${startTime},${endTime},${startCron}\n`
+    );
+
+    console.log(startTime, endTime);
 
     console.log(
       await page.$$eval("a", (elList) =>
