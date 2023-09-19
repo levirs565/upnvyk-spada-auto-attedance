@@ -9,7 +9,7 @@ jobs:
   exec-script:
     executor: 
       name: node/default
-      tag: 16-browser
+      tag: 16.20-browser
     steps:
       - checkout
       - node/install-packages
