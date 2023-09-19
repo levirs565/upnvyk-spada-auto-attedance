@@ -13,6 +13,11 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
+          name: Update npm
+          working_directory: /
+          command: |
+            sudo apt-get upgrade -y
+      - run:
           name: Install Chrome headless dependencies
           working_directory: /
           command: |
