@@ -1,17 +1,17 @@
 version: '2.1'
+orbs:
+  node: circleci/node@x.y
 workflows:
   auto-attedance:
     jobs:
       - exec-script
 jobs:
   exec-script:
-    docker:
-      - image: circleci/node:16-browsers
+    tag: 16-browsers
+    executor: node/default
     steps:
       - checkout
-      - run:
-          command: npm install
-          name: Install dependencies
+      - node/install-packages
       - run:
           command: node main.js
           name: Run script
