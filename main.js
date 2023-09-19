@@ -63,15 +63,13 @@ function fixTime(time) {
     break;
   }
 
+  console.log("Mendapatkan daftar kursus");
   const courseLinkPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
   const courseLinkList = (
     await page.$$eval("a.list-group-item.list-group-item-action", (elList) =>
       elList.map((el) => el.href)
     )
   ).filter((link) => link.startsWith(courseLinkPrefix));
-
-  const attendanceLinkSelector =
-    ".activityinstance > a[href^='https://spada.upnyk.ac.id/mod/attendance/view.php?id=']";
 
   const snapshotDir = path.join(
     url.fileURLToPath(new URL(".", import.meta.url)),
@@ -100,15 +98,17 @@ function fixTime(time) {
 
     await fs.appendFile(courseCsvFile, `${courseIndex},${courseName}\n`);
 
-    if (!(await page.$(attendanceLinkSelector))) {
+    const attedanceUrl =
+      "https://spada.upnyk.ac.id/mod/attendance/view.php?id=";
+    const attendanceLink = await page.$(
+      `.activityinstance > a[href^='${attedanceUrl}']`
+    );
+    if (!attendanceLink) {
       console.log("Tidak ada link presensi");
       continue;
     }
 
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(attendanceLinkSelector),
-    ]);
+    await Promise.all([page.waitForNavigation(), attendanceLink.click()]);
     await page.waitForNetworkIdle();
 
     await addSnapshot(`${courseIndex}-presensi.html`);
@@ -129,45 +129,58 @@ function fixTime(time) {
 
     console.log(startTime, endTime);
 
-    console.log(
-      await page.$$eval("a", (elList) =>
-        elList
-          .filter((el) => el.innerText.toLowerCase().includes("submit"))
-          .map((el) => [el.href, el.innerText, el.className, el.id])
-      )
+    const openSubmitLink = await page.$(
+      "a[href^='https://spada.upnyk.ac.id/mod/attendance/attendance.php']"
     );
-
-    const submitLinkList = await page.$$eval("a", (elList) =>
-      elList
-        .filter((el) => el.innerText.toLowerCase().includes("submit"))
-        .map((el) => el.href)
-    );
-    if (submitLinkList.length == 0) console.log("Tidak ada link submit");
-    for await (const [submitIndex, submitLink] of submitLinkList.entries()) {
-      console.log(`Mencoba ${submitLink}`);
-      await page.goto(submitLink);
-      await page.waitForNetworkIdle();
-
-      await addSnapshot(`${courseIndex}-submit-${submitIndex}.html`);
-
-      console.log(
-        await page.$$eval("input", (elList) =>
-          elList.map((el) => [el.value, el.className, el.id])
-        )
-      );
-
-      console.log(
-        await page.$$eval("button", (elList) =>
-          elList.map((el) => [el.value, el.className, el.id])
-        )
-      );
-
-      console.log(
-        await page.$$eval("a", (elList) =>
-          elList.map((el) => [el.href, el.innerText, el.className, el.id])
-        )
-      );
+    if (!openSubmitLink) {
+      console.log("Tidak ada link submit");
+      continue;
     }
+
+    console.log("Mencoba mensubmit");
+    await Promise.all([page.waitForNavigation(), openSubmitLink.click()]);
+    await page.waitForNetworkIdle();
+
+    if (page.url().startsWith(attedanceUrl)) {
+      console.log("Skip: Kemungkinan sudah teersimpan");
+      continue;
+    }
+
+    await addSnapshot(`${courseIndex}-submit.html`);
+    const submitForm = await page.$(
+      "form[action='https://spada.upnyk.ac.id/mod/attendance/attendance.php']"
+    );
+    const radios = await Promise.all(
+      (
+        await submitForm.$$("label:has(> input[type='radio'])")
+      ).map(async (label) => ({
+        label,
+        text: await label.$eval("span", (span) => span.innerText),
+      }))
+    );
+    const presentRadio = radios.find((radio) =>
+      radio.text.toLowerCase().includes("present")
+    );
+    if (!presentRadio) {
+      console.log("Error: Radio Present tidak ada");
+      continue;
+    }
+
+    console.log("Mengisi radio");
+    await presentRadio.label.click();
+
+    const submitButton = await submitForm.$(
+      "input[type='submit'][value~='save'i]"
+    );
+
+    console.log("Menyimpan presensi");
+    await Promise.all([page.waitForNavigation(), submitButton.click()]);
+    await page.waitForNetworkIdle();
+
+    if (page.url().startsWith(attedanceUrl)) {
+      console.log("Presensi sudah selesai");
+    }
+
     await testSleep(2000);
   }
   await testSleep(5000);
