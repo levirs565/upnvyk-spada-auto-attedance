@@ -1,6 +1,6 @@
 version: '2.1'
 orbs:
-  node: circleci/node@x.y
+  node: circleci/node@5.1.0
 workflows:
   auto-attedance:
     jobs:
