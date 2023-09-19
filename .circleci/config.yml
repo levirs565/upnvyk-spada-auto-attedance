@@ -1,4 +1,4 @@
-version: "2.1"
+version: '2.1'
 orbs:
   node: circleci/node@5.1.0
 workflows:
@@ -7,13 +7,15 @@ workflows:
       - exec-script
 jobs:
   exec-script:
-    executor:
+    executor: 
       name: node/default
       tag: 16.20-browsers
     steps:
       - checkout
-      - node/run:
-          npm-run: exec
+      - node/install-packages
+      - run:
+          command: node main.js
+          name: Run script
       - run:
           command: zip -r snapshot.zip snapshot
           name: Archiving snapshot
