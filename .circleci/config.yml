@@ -16,5 +16,8 @@ jobs:
       - run:
           command: node main.js
           name: Run script
+      - run:
+          command: zip -r snapshot.zip snapshot
+          name: Archiving snapshot
       - store_artifacts:
-          path: ./snapshot
+          path: ./snapshot.zip
