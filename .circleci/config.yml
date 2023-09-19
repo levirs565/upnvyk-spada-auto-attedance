@@ -9,7 +9,7 @@ jobs:
   exec-script:
     executor: 
       name: node/default
-      tag: 16-browsers
+      tag: 16-browser
     steps:
       - checkout
       - node/install-packages
