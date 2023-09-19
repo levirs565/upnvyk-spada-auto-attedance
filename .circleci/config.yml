@@ -13,7 +13,7 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
-          name: Update npm
+          name: Update apt
           working_directory: /
           command: |
             sudo apt-get upgrade -y
