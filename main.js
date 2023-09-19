@@ -64,13 +64,11 @@ function fixTime(time) {
   }
 
   console.log("Mendapatkan daftar kursus");
-  const courseLinkPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
-  const courseLinkList = (
-    await page.$$eval("a.list-group-item.list-group-item-action", (elList) =>
-      elList.map((el) => el.href)
-    )
-  ).filter((link) => link.startsWith(courseLinkPrefix));
-
+  const courseLinkList = await Promise.all(
+    (
+      await page.$$('nav.list-group a[href^="https://spada.upnyk.ac.id/course/view.php?id="]')
+    ).map((link) => link.evaluate((el) => el.href))
+  );
   const snapshotDir = path.join(
     url.fileURLToPath(new URL(".", import.meta.url)),
     "snapshot"
