@@ -1,9 +1,12 @@
 name: Auto attedance
 
-on: 
+on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * 2'
+    - cron: "0 1 * * 2"
+  repository_dispatch:
+    types:
+      - webhook
 
 jobs:
   attendance:
