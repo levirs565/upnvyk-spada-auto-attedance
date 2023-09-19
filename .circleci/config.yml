@@ -7,8 +7,9 @@ workflows:
       - exec-script
 jobs:
   exec-script:
-    tag: 16-browsers
-    executor: node/default
+    executor: 
+      name: node/default
+      tag: 16-browsers
     steps:
       - checkout
       - node/install-packages
