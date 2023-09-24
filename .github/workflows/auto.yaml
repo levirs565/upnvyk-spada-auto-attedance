@@ -27,9 +27,9 @@ jobs:
       - name: Archiving Snapshot
         run: |
           cd snapshot
-          zip -p "${{ secrets.SPADAUSERNAME }}:${{ secrets.SPADAPASSWORD }}" -r snapshot.zip ./*
+          zip -p "${{ secrets.SPADAUSERNAME }}:${{ secrets.SPADAPASSWORD }}" -r ../snapshot.zip ./*
       - name: Upload snapshot
         uses: actions/upload-artifact@v3
         with:
           name: snapshot.zip
-          path: ./snapshot/snapshot.zip
+          path: snapshot.zip
