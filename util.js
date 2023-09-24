@@ -63,6 +63,12 @@ const snapshotDir = path.join(
 );
 const snapshotCsvFile = path.join(snapshotDir, "index.csv");
 
+export async function initSnapshot() {
+  if (await fs.pathExists(snapshotDir)) return;
+  await fs.mkdir(snapshotDir);
+  await fs.appendFile(snapshotCsvFile, "Nama,Url\n");
+}
+
 /**
  *
  * @param {puppeteer.Page} page

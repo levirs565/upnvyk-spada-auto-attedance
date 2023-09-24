@@ -1,4 +1,10 @@
-import { addSnapshot, courseViewLink, launchPuppeteer, login } from "./util.js";
+import {
+  addSnapshot,
+  courseViewLink,
+  initSnapshot,
+  launchPuppeteer,
+  login,
+} from "./util.js";
 
 /**
  *
@@ -85,9 +91,10 @@ async function run(id) {
   const browser = await launchPuppeteer();
   const page = await browser.newPage();
   if (!(await login(page))) {
-    console.log("Presensi tidak dapat dilakukan login gagal.")
+    console.log("Presensi tidak dapat dilakukan login gagal.");
     return;
   }
+  await initSnapshot();
   await attedance(page, id);
   await browser.close();
 }
