@@ -2,12 +2,10 @@ name: Auto attedance
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 1 * * 2"
-  repository_dispatch:
-    types:
-      - webhook
-
+    inputs:
+      course_id:
+        description: "Course ID"
+        required: true
 jobs:
   attendance:
     runs-on: ubuntu-latest
@@ -21,13 +19,17 @@ jobs:
       - name: Run auto attedance
         run: |
           npm ci
-          node main.js
+          node attedance.js ${{ inputs.course_id }}
         env:
           CI: true
           SPADA_USERNAME: ${{ secrets.SPADAUSERNAME }}
           SPADA_PASSWORD: ${{ secrets.SPADAPASSWORD }}
+      - name: Archiving Snapshot
+        run: |
+          cd snapshot
+          zip -p "${{ secrets.SPADAUSERNAME }}:${{ secrets.SPADAPASSWORD }}" -r snapshot.zip ./*
       - name: Upload snapshot
         uses: actions/upload-artifact@v3
         with:
-          name: snapshot
-          path: snapshot
+          name: snapshot.zip
+          path: ./snapshot/snapshot.zip
