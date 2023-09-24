@@ -76,6 +76,6 @@ export async function addSnapshot(page) {
 
 export function launchPuppeteer() {
   return puppeteer.launch({
-    headless: !isCI,
+    headless: isCI,
   });
 }
