@@ -3,8 +3,8 @@ name: Auto attedance
 on:
   workflow_dispatch:
     inputs:
-      course_id:
-        description: "Course ID"
+      attedance_id:
+        description: "Attedance ID"
         required: true
 jobs:
   attendance:
@@ -19,7 +19,7 @@ jobs:
       - name: Run auto attedance
         run: |
           npm ci
-          node attedance.js ${{ inputs.course_id }}
+          node attedance.js ${{ inputs.attedance_id }}
         env:
           CI: true
           SPADA_USERNAME: ${{ secrets.SPADAUSERNAME }}

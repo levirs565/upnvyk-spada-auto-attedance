@@ -1,8 +1,10 @@
-import { courseViewLink, launchPuppeteer, login } from "./util.js";
+import {
+  attedanceUrlPrefix,
+  courseUrlPrefix,
+  launchPuppeteer,
+  login,
+} from "./util.js";
 import fs from "fs-extra";
-
-const attedanceUrlPrefix =
-  "https://spada.upnyk.ac.id/mod/attendance/view.php?id=";
 
 /**
  *
@@ -30,10 +32,9 @@ async function getCourseData(page) {
   await page.waitForNetworkIdle();
 
   const dateTimeList = await page.$$(".datecol.cell.c0");
-  const [date, timeRange] = await dateTimeList.at(-1).evaluate((el) => [
-    el.children[0].textContent,
-    el.children[1].textContent,
-  ]);
+  const [date, timeRange] = await dateTimeList
+    .at(-1)
+    .evaluate((el) => [el.children[0].textContent, el.children[1].textContent]);
   return {
     id,
     name,
@@ -54,7 +55,7 @@ async function run() {
   console.log("Mendapatkan daftar kursus");
   const courseLinkList = await Promise.all(
     (
-      await page.$$(`nav.list-group a[href^="${courseViewLink}"]`)
+      await page.$$(`nav.list-group a[href^="${courseUrlPrefix}"]`)
     ).map((link) => link.evaluate((el) => el.href))
   );
 

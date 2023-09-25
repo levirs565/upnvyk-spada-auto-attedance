@@ -55,7 +55,9 @@ export function isCI() {
   return process.env.CI === "true";
 }
 
-export const courseViewLink = "https://spada.upnyk.ac.id/course/view.php?id=";
+export const courseUrlPrefix = "https://spada.upnyk.ac.id/course/view.php?id=";
+export const attedanceUrlPrefix =
+  "https://spada.upnyk.ac.id/mod/attendance/view.php?id=";
 
 const snapshotDir = path.join(
   url.fileURLToPath(new URL(".", import.meta.url)),

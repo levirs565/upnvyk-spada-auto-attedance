@@ -1,6 +1,6 @@
 import {
   addSnapshot,
-  courseViewLink,
+  attedanceUrlPrefix,
   initSnapshot,
   launchPuppeteer,
   login,
@@ -13,17 +13,11 @@ import {
  * @returns
  */
 async function attedance(page, id) {
-  await page.goto(courseViewLink + id);
+  await page.goto(attedanceUrlPrefix + id);
   await page.waitForNetworkIdle();
+
   const courseName = await page.$eval("h1", (el) => el.innerText);
   console.log(`Mencoba presensi ${courseName}`);
-
-  await addSnapshot(page);
-
-  const attedanceUrl = "https://spada.upnyk.ac.id/mod/attendance/view.php?id=";
-
-  await Promise.all([page.waitForNavigation(), attendanceLink.click()]);
-  await page.waitForNetworkIdle();
 
   await addSnapshot(page);
 
