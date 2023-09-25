@@ -69,7 +69,7 @@ async function attedance(page, id) {
   await Promise.all([page.waitForNavigation(), submitButton.click()]);
   await page.waitForNetworkIdle();
 
-  if (page.url().startsWith(attedanceUrl)) {
+  if (page.url().startsWith(attedanceUrlPrefix)) {
     console.log("Presensi sudah selesai");
   }
 }
