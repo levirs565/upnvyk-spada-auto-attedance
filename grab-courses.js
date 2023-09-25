@@ -23,10 +23,12 @@ async function getCourseData(page) {
     return {
       id,
       name,
+      url,
     };
   }
 
   const attedanceUrl = await attedanceLink.evaluate((el) => el.href);
+  const attedanceId = attedanceUrl.substring(attedanceUrl.lastIndexOf("=") + 1);
 
   await Promise.all([page.waitForNavigation(), attedanceLink.click()]);
   await page.waitForNetworkIdle();
@@ -38,7 +40,9 @@ async function getCourseData(page) {
   return {
     id,
     name,
+    url,
     attedanceUrl,
+    attedanceId,
     date,
     timeRange,
   };

@@ -1,3 +1,4 @@
 node_modules
 snapshot
 courses.json
+.env
