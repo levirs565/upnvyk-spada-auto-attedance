@@ -21,13 +21,6 @@ async function attedance(page, id) {
   await addSnapshot(page);
 
   const attedanceUrl = "https://spada.upnyk.ac.id/mod/attendance/view.php?id=";
-  const attendanceLink = await page.$(
-    `.activityinstance > a[href^='${attedanceUrl}']`
-  );
-  if (!attendanceLink) {
-    console.log("Tidak ada link presensi");
-    return;
-  }
 
   await Promise.all([page.waitForNavigation(), attendanceLink.click()]);
   await page.waitForNetworkIdle();

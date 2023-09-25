@@ -19,12 +19,7 @@ function fixTime(time) {
   const page = await browser.newPage();
 
 
-  console.log("Mendapatkan daftar kursus");
-  const courseLinkList = await Promise.all(
-    (
-      await page.$$('nav.list-group a[href^=""]')
-    ).map((link) => link.evaluate((el) => el.href))
-  );
+
   const courseCsvFile = path.join(snapshotDir, "course-list.csv");
   const courseTimeCsvFile = path.join(snapshotDir, "course-times.csv");
 
