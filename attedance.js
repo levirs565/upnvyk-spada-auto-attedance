@@ -55,7 +55,7 @@ async function attedance(page, id) {
     await pushLog(
       `Presensi "${courseName}" gagal. Alasan: Tidak ada link submit`
     );
-    return;
+    return false;
   }
 
   console.log("Mencoba mensubmit");
@@ -66,7 +66,7 @@ async function attedance(page, id) {
     await pushLog(
       `Presensi "${courseName}" kemungkinan berhasil. Skip mengisi radio`
     );
-    return;
+    return true;
   }
 
   await addSnapshot(page);
@@ -88,7 +88,7 @@ async function attedance(page, id) {
     await pushLog(
       `Presensi "${courseName}" gagal. Alasan: radio present tidak ada`
     );
-    return;
+    return false;
   }
 
   console.log("Mengisi radio");
@@ -106,7 +106,12 @@ async function attedance(page, id) {
     await pushLog(
       `Presensi "${courseName}" kemungkinan berhasil. Pengisian radio berhasil`
     );
+    return true;
   }
+  await pushLog(
+    `Presensi "${courseName}" kemungkinan gagal. Kegagalan setelah submit form radio`
+  );
+  return false;
 }
 
 async function run(id) {
@@ -117,8 +122,9 @@ async function run(id) {
     return;
   }
   await initSnapshot();
-  await attedance(page, id);
+  const success = await attedance(page, id);
   await browser.close();
+  if (!success) process.exitCode = 1;
 }
 
 if (process.argv.length !== 3) {
