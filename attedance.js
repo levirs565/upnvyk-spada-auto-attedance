@@ -66,6 +66,7 @@ async function sendPushNotification(body) {
 async function pushLog(body) {
   console.log(body);
   await sendPushNotification(body);
+  console.log(`::notice ::${body}`);
 }
 
 /**
