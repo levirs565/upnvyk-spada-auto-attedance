@@ -63,10 +63,12 @@ async function sendPushNotification(body) {
   );
 }
 
-async function pushLog(body) {
-  console.log(body);
-  await sendPushNotification(body);
+function notice(body) {
   console.log(`::notice ::${body}`);
+}
+
+function error(body) {
+  console.log(`::error ::${body}`);
 }
 
 /**
@@ -91,7 +93,7 @@ async function attedance(page, id) {
     "a[href^='https://spada.upnyk.ac.id/mod/attendance/attendance.php']"
   );
   if (!openSubmitLink) {
-    await pushLog(
+    await error(
       `Presensi "${courseName}" gagal. Alasan: Tidak ada link submit`
     );
     return false;
@@ -102,7 +104,7 @@ async function attedance(page, id) {
   await page.waitForNetworkIdle();
 
   if (page.url().startsWith(attedanceUrlPrefix)) {
-    await pushLog(
+    await notice(
       `Presensi "${courseName}" kemungkinan berhasil. Skip mengisi radio`
     );
     return true;
@@ -124,7 +126,7 @@ async function attedance(page, id) {
     radio.text.toLowerCase().includes(state)
   );
   if (!presentRadio) {
-    await pushLog(
+    await error(
       `Presensi "${courseName}" gagal. Alasan: radio present tidak ada`
     );
     return false;
@@ -142,12 +144,12 @@ async function attedance(page, id) {
   await page.waitForNetworkIdle();
 
   if (page.url().startsWith(attedanceUrlPrefix)) {
-    await pushLog(
+    await notice(
       `Presensi "${courseName}" kemungkinan berhasil. Pengisian radio berhasil`
     );
     return true;
   }
-  await pushLog(
+  await error(
     `Presensi "${courseName}" kemungkinan gagal. Kegagalan setelah submit form radio`
   );
   return false;
@@ -157,7 +159,7 @@ async function run(id) {
   const browser = await launchPuppeteer();
   const page = await browser.newPage();
   if (!(await login(page))) {
-    await pushLog("Presensi tidak dapat dilakukan karena login gagal.");
+    await error("Presensi tidak dapat dilakukan karena login gagal.");
     return;
   }
   await initSnapshot();
