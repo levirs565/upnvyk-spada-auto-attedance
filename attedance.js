@@ -6,6 +6,41 @@ import {
   login,
 } from "./util.js";
 import axios from "axios";
+import { fromMarkdown } from "mdast-util-from-markdown";
+import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
+import { gfmTaskListItemFromMarkdown } from "mdast-util-gfm-task-list-item";
+import { find } from "unist-util-find";
+import { toString } from "mdast-util-to-string";
+import { findAfter } from "unist-util-find-after";
+
+async function getAttedanceState() {
+  const response = await axios.get(
+    `https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/issues/${process.env.CONTROL_ISSUE_ID}`,
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Beaerer ${process.env.GITHUB_TOKEN}`,
+      },
+    }
+  );
+
+  const ast = fromMarkdown(response.data.body, "utf-8", {
+    extensions: [gfmTaskListItem()],
+    mdastExtensions: [gfmTaskListItemFromMarkdown()],
+  });
+
+  const stateHeading = find(
+    ast,
+    (node) => node.type === "paragraph" && /^state\s*:$/i.test(toString(node))
+  );
+  const stateList = findAfter(ast, stateHeading, "list");
+  const checkedStateItem = find(
+    stateList,
+    (node) => node.type === "listItem" && node.checked
+  );
+  if (!checkedStateItem) return "present";
+  return toString(checkedStateItem).trim().toLowerCase();
+}
 
 /**
  *
@@ -40,6 +75,9 @@ async function pushLog(body) {
  * @returns
  */
 async function attedance(page, id) {
+  const state = await getAttedanceState();
+  console.log(`Attedance akan dilaksanakan dengan status "${state}"`);
+
   await page.goto(attedanceUrlPrefix + id);
   await page.waitForNetworkIdle();
 
@@ -82,7 +120,7 @@ async function attedance(page, id) {
     }))
   );
   const presentRadio = radios.find((radio) =>
-    radio.text.toLowerCase().includes("present")
+    radio.text.toLowerCase().includes(state)
   );
   if (!presentRadio) {
     await pushLog(

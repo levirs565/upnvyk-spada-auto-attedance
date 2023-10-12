@@ -25,10 +25,11 @@ jobs:
           SPADA_USERNAME: ${{ secrets.SPADA_USERNAME }}
           SPADA_PASSWORD: ${{ secrets.SPADA_PASSWORD }}
           PUSHBULLET_TOKEN: ${{ secrets.PUSHBULLET_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Archiving Snapshot
         run: |
           cd snapshot
-          zip -r -P "${{ secrets.SPADAUSERNAME }}:${{ secrets.SPADAPASSWORD }}" ../snapshot.zip ./*
+          zip -r -P "${{ secrets.SPADA_USERNAME }}:${{ secrets.SPADA_PASSWORD }}" ../snapshot.zip ./*
       - name: Upload snapshot
         uses: actions/upload-artifact@v3
         with:
