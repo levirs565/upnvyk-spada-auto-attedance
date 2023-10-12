@@ -79,7 +79,7 @@ function error(body) {
  */
 async function attedance(page, id) {
   const state = await getAttedanceState();
-  console.log(`Attedance akan dilaksanakan dengan status "${state}"`);
+  notice(`Attedance akan dilaksanakan dengan status "${state}"`);
 
   await page.goto(attedanceUrlPrefix + id);
   await page.waitForNetworkIdle();
