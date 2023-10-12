@@ -26,6 +26,7 @@ jobs:
           SPADA_PASSWORD: ${{ secrets.SPADA_PASSWORD }}
           PUSHBULLET_TOKEN: ${{ secrets.PUSHBULLET_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONTROL_ISSUE_ID: ${{ env.CONTROL_ISSUE_ID }}
       - name: Archiving Snapshot
         run: |
           cd snapshot
