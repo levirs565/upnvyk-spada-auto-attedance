@@ -5,6 +5,33 @@ import {
   launchPuppeteer,
   login,
 } from "./util.js";
+import axios from "axios";
+
+/**
+ *
+ * @param {string} body
+ */
+async function sendPushNotification(body) {
+  return axios.post(
+    "https://api.pushbullet.com/v2/pushes",
+    {
+      type: "link",
+      title: "UPNYK SPADA Auto Attedance",
+      body,
+      url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+    },
+    {
+      headers: {
+        "Access-Token": process.env.PUSHBULLET_TOKEN,
+      },
+    }
+  );
+}
+
+async function pushLog(body) {
+  console.log(body);
+  await sendPushNotification(body);
+}
 
 /**
  *
@@ -25,7 +52,9 @@ async function attedance(page, id) {
     "a[href^='https://spada.upnyk.ac.id/mod/attendance/attendance.php']"
   );
   if (!openSubmitLink) {
-    console.log("Tidak ada link submit");
+    await pushLog(
+      `Presensi "${courseName}" gagal. Alasan: Tidak ada link submit`
+    );
     return;
   }
 
@@ -34,7 +63,9 @@ async function attedance(page, id) {
   await page.waitForNetworkIdle();
 
   if (page.url().startsWith(attedanceUrl)) {
-    console.log("Skip: Kemungkinan sudah teersimpan");
+    await pushLog(
+      `Presensi "${courseName}" kemungkinan berhasil. Skip mengisi radio`
+    );
     return;
   }
 
@@ -54,7 +85,9 @@ async function attedance(page, id) {
     radio.text.toLowerCase().includes("present")
   );
   if (!presentRadio) {
-    console.log("Error: Radio Present tidak ada");
+    await pushLog(
+      `Presensi "${courseName}" gagal. Alasan: radio present tidak ada`
+    );
     return;
   }
 
@@ -70,7 +103,9 @@ async function attedance(page, id) {
   await page.waitForNetworkIdle();
 
   if (page.url().startsWith(attedanceUrl)) {
-    console.log("Presensi sudah selesai");
+    await pushLog(
+      `Presensi "${courseName}" kemungkinan berhasil. Pengisian radio berhasil`
+    );
   }
 }
 
@@ -78,7 +113,7 @@ async function run(id) {
   const browser = await launchPuppeteer();
   const page = await browser.newPage();
   if (!(await login(page))) {
-    console.log("Presensi tidak dapat dilakukan login gagal.");
+    await pushLog("Presensi tidak dapat dilakukan karena login gagal.");
     return;
   }
   await initSnapshot();

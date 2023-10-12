@@ -22,8 +22,9 @@ jobs:
           node attedance.js ${{ inputs.attedance_id }}
         env:
           CI: true
-          SPADA_USERNAME: ${{ secrets.SPADAUSERNAME }}
-          SPADA_PASSWORD: ${{ secrets.SPADAPASSWORD }}
+          SPADA_USERNAME: ${{ secrets.SPADA_USERNAME }}
+          SPADA_PASSWORD: ${{ secrets.SPADA_PASSWORD }}
+          PUSHBULLET_TOKEN: ${{ secrets.PUSHBULLET_TOKEN }}
       - name: Archiving Snapshot
         run: |
           cd snapshot
