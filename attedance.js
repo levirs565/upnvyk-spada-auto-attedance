@@ -62,7 +62,7 @@ async function attedance(page, id) {
   await Promise.all([page.waitForNavigation(), openSubmitLink.click()]);
   await page.waitForNetworkIdle();
 
-  if (page.url().startsWith(attedanceUrl)) {
+  if (page.url().startsWith(attedanceUrlPrefix)) {
     await pushLog(
       `Presensi "${courseName}" kemungkinan berhasil. Skip mengisi radio`
     );
@@ -102,7 +102,7 @@ async function attedance(page, id) {
   await Promise.all([page.waitForNavigation(), submitButton.click()]);
   await page.waitForNetworkIdle();
 
-  if (page.url().startsWith(attedanceUrl)) {
+  if (page.url().startsWith(attedanceUrlPrefix)) {
     await pushLog(
       `Presensi "${courseName}" kemungkinan berhasil. Pengisian radio berhasil`
     );
