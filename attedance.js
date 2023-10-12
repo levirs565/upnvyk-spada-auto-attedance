@@ -127,7 +127,7 @@ async function attedance(page, id) {
   );
   if (!presentRadio) {
     await error(
-      `Presensi "${courseName}" gagal. Alasan: radio present tidak ada`
+      `Presensi "${courseName}" gagal. Alasan: radio "${state}" tidak ada`
     );
     return false;
   }
