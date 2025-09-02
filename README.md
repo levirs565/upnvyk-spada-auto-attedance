@@ -64,6 +64,8 @@ Bot untuk absen spada secara otomatis
     - [ ] Absent
     ```
 
+  - Buka Actions, kemudian aktifkan GitHub Actions. Biasanya bertuliskan `I understand my workflows, go ahead and enable them`
+
   - Buka Settings -> Secrets and variables -> Actions.
 
     - Pastikan anda di tab Secrets. Tambahkan Repository Secrets berikut:
