@@ -16,6 +16,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
+      # https://github.com/puppeteer/puppeteer/blob/main/.github/workflows/ci.yml#L145C7-L146C86
+      - name: Disable AppArmor 
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Run auto attedance
         run: |
           npm ci
