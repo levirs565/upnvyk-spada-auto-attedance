@@ -14,12 +14,29 @@ Bot untuk absen spada secara otomatis
 - Fork repository ini (**wajib**)
 - Clone repository **hasil fork**
 - Buat folder baru di cron-job.org, namanya bebas
+- Pergi ke [Settings Akun Github](https://github.com/settings/profile) -> Developers Settings -> Personal Access Tokens -> Fine-grained tokens. Pilih Generate New Token.
+
+  Isi Token Name dengan `SPADA Auto Attedance Bot`
+
+  Expiration pilih tanggal setelah semester selesai
+  
+  Repository Access pilih Only select repositories. Pilih repository **hasil fork**
+
+  Pilih Add Permissions, pilih Actions
+
+  Pastikan Access untuk Actions adalah Read and write
+
+  Kemudian Generate Token
+
+  Copy dan simpan token yang dihasilkan
+
 - Buat file `.env` isinya seperti ini:
 
   ```text
   SPADA_USERNAME=""
   SPADA_PASSWORD=""
   GITHUB_REPOSITORY=""
+  GITHUB_TOKEN=""
   CRONJOB_KEY=""
   CRONJOB_FOLDERID=""
   ```
@@ -29,6 +46,8 @@ Bot untuk absen spada secara otomatis
   Isi `SPADA_PASSWORD` dengan password SPADA
 
   Isi `GITHUB_REPOSITORY` dengan alamat repository **hasil fork**. Misalkan jika repository anda mempunyai alamat `https://github.com/levirs565/upnvyk-spada-auto-attedance/` maka isi `GITHUB_REPOSITORY` dengan `levirs565/upnvyk-spada-auto-attedance`
+
+  Isi `GITHUB_TOKEN` dengan token yang dihasilkan pada tahap sebelumnya
 
   Isi `CRONJOB_KEY` dengan API Key dari cron-job.org. API Key bisa dilihat di Settings -> API Keys pada cron-job.org
 
@@ -77,3 +96,24 @@ Bot untuk absen spada secara otomatis
     - Buka tab Variables.
 
       Buat Repository variabel baru dengan nama `CONTROL_ISSUE_ID` dan valuenya adalah ID dari issue yang anda buat tadi. Anda bisa cek dengan cara melihat URL nya. Misalkan URL-nya adalah `https://github.com/levirs565/upnvyk-spada-auto-attedance/issues/2` maka IDnya adalah 2
+
+## Tips
+
+Untuk memonitor bot anda dapat menginstall aplikasi Github untuk Android atau iOS. Secara default, akan muncul notifikasi saat bot error atau berhaasil.
+
+## FAQ
+
+- Bot tidak berjalan
+  
+  Ada 2 kemungkinan:
+
+  - Pertama lihat di cron-job.org, cek apakah ada cron job yang error di folder yang anda buat.
+
+    Jika herhubungan dengan permission, maka cek permission Personal Access Token yang anda buat. Jika sudah benar, cek `GITHUB_REPOSITORY` di `.env`
+
+  - Jika cron-job.org baik-baik saja, cek di GitHub actions
+
+- Saya salah mengisi `GITHUB_REPOSITORY` atau `GITHUB_TOKEN`.
+
+  Jika anda sudah menajalankan script `post-cronjob.js`, maka hapus semua cron job di folder yang anda buat. Kemudian jalankan lagi scriptnya
+
