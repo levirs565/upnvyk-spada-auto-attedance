@@ -42,27 +42,6 @@ async function getAttedanceState() {
   return toString(checkedStateItem).trim().toLowerCase();
 }
 
-/**
- *
- * @param {string} body
- */
-async function sendPushNotification(body) {
-  return axios.post(
-    "https://api.pushbullet.com/v2/pushes",
-    {
-      type: "link",
-      title: "UPNYK SPADA Auto Attedance",
-      body,
-      url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
-    },
-    {
-      headers: {
-        "Access-Token": process.env.PUSHBULLET_TOKEN,
-      },
-    }
-  );
-}
-
 function notice(body) {
   console.log(`::notice ::${body}`);
 }

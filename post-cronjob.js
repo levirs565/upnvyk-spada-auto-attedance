@@ -27,7 +27,7 @@ function generateJobDetail(course) {
       enabled: true,
       title: `${course.name}`,
       saveResponses: false,
-      url: "https://api.github.com/repos/levirs565/upnvyk-spada-auto-attedance/actions/workflows/auto.yaml/dispatches",
+      url: `https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/actions/workflows/auto.yaml/dispatches`,
       notification: {
         onFailure: false,
         onSuccess: false,

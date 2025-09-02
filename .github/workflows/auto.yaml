@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 22.x
       - name: Run auto attedance
         run: |
           npm ci
@@ -24,7 +24,6 @@ jobs:
           CI: true
           SPADA_USERNAME: ${{ secrets.SPADA_USERNAME }}
           SPADA_PASSWORD: ${{ secrets.SPADA_PASSWORD }}
-          PUSHBULLET_TOKEN: ${{ secrets.PUSHBULLET_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONTROL_ISSUE_ID: ${{ vars.CONTROL_ISSUE_ID }}
       - name: Archiving Snapshot
