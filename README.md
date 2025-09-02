@@ -53,6 +53,12 @@ Bot untuk absen spada secara otomatis
 
   Isi `CRONJOB_FOLDERID` dengan ID folder cron-job.org yang baru anda buat. Untuk mendapatkan ID nya, buka folder kemudian cek alamat URL nya. Misalkan alamat URL nya `https://console.cron-job.org/jobs/folders/12323` maka `CRONJOB_FOLDERID` diisi dengan `12323`
 
+- Jalankan perintah ini untuk menginstall dependensi:
+
+  ```sh
+  npm install
+  ```
+
 - Jalankan perintah ini di folder repository untuk mendapatkan data kursus
 
   ```sh
@@ -68,6 +74,8 @@ Bot untuk absen spada secara otomatis
 
 - Pergi ke repository **hasil fork**
   
+  - Buka Settings -> General, centang Features -> Issues
+
   - Buka Issues, buat issue baru
 
     Titlenya: `Issue to Control Attedance (Present)`
