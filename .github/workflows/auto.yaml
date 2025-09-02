@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v5
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: 22.x
       - name: Run auto attedance
@@ -31,7 +31,7 @@ jobs:
           cd snapshot
           zip -r -P "${{ secrets.SPADA_USERNAME }}:${{ secrets.SPADA_PASSWORD }}" ../snapshot.zip ./*
       - name: Upload snapshot
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: snapshot.zip
           path: snapshot.zip
