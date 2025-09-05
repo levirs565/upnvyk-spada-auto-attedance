@@ -137,6 +137,7 @@ async function attedance(page, id) {
 async function run(id) {
   const browser = await launchPuppeteer();
   const page = await browser.newPage();
+  page.setDefaultTimeout(60 * 1000);
   if (!(await login(page))) {
     await error("Presensi tidak dapat dilakukan karena login gagal.");
     return;
