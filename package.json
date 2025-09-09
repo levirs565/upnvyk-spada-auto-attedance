@@ -19,6 +19,8 @@
     "mdast-util-to-string": "^4.0.0",
     "micromark-extension-gfm-task-list-item": "^2.1.0",
     "puppeteer": "^24.18.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-user-preferences": "^2.4.1",
     "unist-util-find": "^3.0.0",
     "unist-util-find-after": "^5.0.0"
   }

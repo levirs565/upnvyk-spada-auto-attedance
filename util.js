@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import puppeteerExtraPluginUserPreferences from "puppeteer-extra-plugin-user-preferences";
 import fs from "fs-extra";
 import path from "path";
 import url from "url";
@@ -82,8 +83,17 @@ export async function addSnapshot(page) {
   await fs.writeFile(path.join(snapshotDir, name), await page.content());
 }
 
+puppeteer.use(puppeteerExtraPluginUserPreferences({
+  userPrefs: {
+    profile: {
+      password_manager_leak_detection: false
+    }
+  }
+}))
+
 export function launchPuppeteer() {
   return puppeteer.launch({
     headless: isCI(),
+    args: ["--disable-features=PasswordLeakDetection", "--disable-save-password-bubble", "--turn-off-password-popup"]
   });
 }
